@@ -29,6 +29,7 @@
             background: linear-gradient(135deg, #050810 0%, #0a0e27 50%, #1a0f2e 100%);
             color: var(--text-light);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .container {
@@ -50,7 +51,48 @@
             box-shadow: 0 0 30px rgba(255, 72, 160, 0.3);
             flex-wrap: wrap;
             gap: 20px;
+            position: relative;
         }
+
+        .spam-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .spam-text {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: spam-blink 0.6s infinite;
+            pointer-events: none;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        @keyframes spam-blink {
+            0%, 10%, 20%, 30%, 40%, 90%, 100% {
+                opacity: 0;
+            }
+            15%, 25%, 35% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2) rotate(5deg);
+            }
+        }
+
+        .spam-yellow { color: #ffd700; text-shadow: 0 0 20px #ffd700; }
+        .spam-pink { color: #ff48a0; text-shadow: 0 0 20px #ff48a0; }
+        .spam-cyan { color: #00ffff; text-shadow: 0 0 20px #00ffff; }
+        .spam-lime { color: #00ff00; text-shadow: 0 0 20px #00ff00; }
 
         .header-content {
             display: flex;
@@ -234,6 +276,18 @@
         .calendar-table tbody tr.mirage-main {
             background: rgba(255, 215, 0, 0.15);
             border-left: 4px solid var(--warning);
+            animation: row-glow 2s infinite;
+        }
+
+        @keyframes row-glow {
+            0%, 100% {
+                background: rgba(255, 215, 0, 0.15);
+                box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+            }
+            50% {
+                background: rgba(255, 215, 0, 0.25);
+                box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.5);
+            }
         }
 
         .calendar-table tbody tr.mirage-main td {
@@ -385,6 +439,10 @@
                 padding: 4px 6px;
                 font-size: 0.65rem;
             }
+
+            .spam-text {
+                font-size: 1.2rem;
+            }
         }
 
         .print-hidden {
@@ -392,13 +450,16 @@
         }
 
         @media print {
-            .controls, .btn-export {
+            .controls, .btn-export, .spam-container {
                 display: none !important;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Spam Container -->
+    <div class="spam-container" id="spamContainer"></div>
+
     <div class="container">
         <header class="header">
             <div class="header-content">
@@ -483,6 +544,49 @@
     </div>
 
     <script>
+        // Crear spam de texto titilante
+        const spamMessages = [
+            '⚔️ ¡APARECIÓ! ⚔️',
+            '🔥 MIRAGE DE NAVIO 🔥',
+            '💰 ¡CORRE! 💰',
+            '⚡ ¡DERRÓTALO! ⚡',
+            '✨ ¡BOSSES! ✨',
+            '🎯 ¡AHORA! 🎯',
+            '💎 ¡LOOT! 💎'
+        ];
+
+        const spamColors = ['spam-yellow', 'spam-pink', 'spam-cyan', 'spam-lime'];
+
+        function createSpam() {
+            const container = document.getElementById('spamContainer');
+            
+            for (let i = 0; i < 8; i++) {
+                const spam = document.createElement('div');
+                spam.className = `spam-text ${spamColors[Math.floor(Math.random() * spamColors.length)]}`;
+                spam.textContent = spamMessages[Math.floor(Math.random() * spamMessages.length)];
+                
+                spam.style.left = Math.random() * 80 + '%';
+                spam.style.top = Math.random() * 80 + '%';
+                spam.style.animationDelay = (Math.random() * 2) + 's';
+                spam.style.fontSize = (Math.random() * 0.5 + 1.5) + 'rem';
+                
+                container.appendChild(spam);
+            }
+        }
+
+        // Crear spam cada 3 segundos
+        setInterval(() => {
+            createSpam();
+            
+            // Limpiar spam viejo
+            const spamTexts = document.querySelectorAll('.spam-text');
+            if (spamTexts.length > 50) {
+                for (let i = 0; i < 10; i++) {
+                    spamTexts[i].remove();
+                }
+            }
+        }, 3000);
+
         // Datos del Mirage Navio - Especiales
         const mirageNavioData = [
             { world: 'W7', level: '141+', location: '3F Desfiladero de la Lúnula de Sangre', boss: 'Mirage de Navio', times: ['22:00'] },
@@ -679,6 +783,9 @@
                 closeModal();
             }
         });
+
+        // Crear primer lote de spam
+        createSpam();
 
         renderTable();
     </script>
