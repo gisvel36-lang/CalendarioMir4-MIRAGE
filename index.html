@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIR4 - Calendario de Apariciones Mirage de Navio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <img src="https://vvrl.cc/es/i543v8/logo-mir4.png" alt="MIR4 Logo" class="logo">
+                <h1 class="title">Calendario de Apariciones</h1>
+                <p class="subtitle">Mirage de Navio</p>
+            </div>
+            <img src="https://vvrl.cc/es/gpr5ue/Chibi%20Gis.png" alt="Avatar" class="avatar">
+        </header>
+
+        <!-- Controls Section -->
+        <section class="controls">
+            <div class="control-group">
+                <label for="timezone">
+                    <i class="fas fa-globe"></i> Zona Horaria:
+                </label>
+                <select id="timezone" class="select-input">
+                    <option value="-3">SA (UTC-3)</option>
+                    <option value="-4">NA (UTC-4)</option>
+                    <option value="2">EU (UTC+2)</option>
+                    <option value="6">INMENA (UTC+6)</option>
+                    <option value="8">ASIA (UTC+8)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="language">
+                    <i class="fas fa-language"></i> Idioma:
+                </label>
+                <select id="language" class="select-input">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                    <option value="pt">Português</option>
+                    <option value="ko">한국어</option>
+                </select>
+            </div>
+
+            <button id="toggleDefeated" class="btn btn-toggle">
+                <i class="fas fa-check"></i> Mostrar Derrotados
+            </button>
+
+            <button id="exportPdf" class="btn btn-export">
+                <i class="fas fa-file-pdf"></i> PDF
+            </button>
+
+            <button id="exportImage" class="btn btn-export">
+                <i class="fas fa-image"></i> Imagen
+            </button>
+        </section>
+
+        <!-- Calendar Table -->
+        <section class="calendar-section">
+            <div class="table-wrapper">
+                <table class="calendar-table" id="calendarTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" class="checkbox-select"></th>
+                            <th data-i18n="world">Mundo</th>
+                            <th data-i18n="level">Nivel Requerido</th>
+                            <th data-i18n="location">Ubicación</th>
+                            <th data-i18n="boss">Nombre del Jefe</th>
+                            <th data-i18n="time">Horarios</th>
+                            <th data-i18n="actions">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Notifications Area -->
+        <div id="notificationsArea" class="notifications-area"></div>
+    </div>
+
+    <!-- Alarm Modal -->
+    <div id="alarmModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Configurar Alarma</h2>
+            <p id="alarmBossName"></p>
+            <div class="alarm-options">
+                <label>
+                    <input type="radio" name="alarmType" value="10" checked> 10 minutos antes
+                </label>
+                <label>
+                    <input type="radio" name="alarmType" value="15"> 15 minutos antes
+                </label>
+                <label>
+                    <input type="radio" name="alarmType" value="30"> 30 minutos antes
+                </label>
+                <label>
+                    <input type="radio" name="alarmType" value="60"> 1 hora antes
+                </label>
+            </div>
+            <button id="setAlarmBtn" class="btn btn-primary">Establecer Alarma</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="translations.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
