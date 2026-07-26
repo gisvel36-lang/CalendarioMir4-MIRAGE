@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIR4 - Calendario de Apariciones Mirage de Navio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-color: #ff48a0;
@@ -13,6 +15,7 @@
             --text-light: #e0e0e0;
             --text-muted: #a0a0a0;
             --success: #4ade80;
+            --warning: #fbbf24;
         }
 
         * {
@@ -52,39 +55,14 @@
         .header-content {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             flex: 1;
             min-width: 300px;
         }
 
-        .logo-text {
-            font-size: 3.5rem;
-            filter: drop-shadow(0 0 10px rgba(255, 72, 160, 0.5));
-            animation: pulse 2s infinite;
-        }
-
-        .avatar-placeholder {
-            font-size: 5rem;
-            border-radius: 50%;
-            border: 3px solid var(--primary-color);
-            width: 120px;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(255, 72, 160, 0.6);
-            background: rgba(255, 72, 160, 0.1);
-            animation: avatarGlow 3s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes avatarGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 72, 160, 0.6); }
-            50% { box-shadow: 0 0 40px rgba(255, 72, 160, 0.8); }
+        .logo-img {
+            height: 100px;
+            filter: drop-shadow(0 0 15px rgba(255, 72, 160, 0.6));
         }
 
         .title {
@@ -253,6 +231,16 @@
             background: rgba(255, 72, 160, 0.05);
         }
 
+        .calendar-table tbody tr.mirage-main {
+            background: rgba(255, 215, 0, 0.15);
+            border-left: 4px solid var(--warning);
+        }
+
+        .calendar-table tbody tr.mirage-main td {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
         .calendar-table tbody tr.defeated {
             opacity: 0.6;
         }
@@ -355,8 +343,16 @@
                 text-align: center;
             }
 
+            .header-content {
+                flex-direction: column;
+            }
+
             .title {
                 font-size: 1.8rem;
+            }
+
+            .logo-img {
+                height: 80px;
             }
 
             .controls {
@@ -390,19 +386,28 @@
                 font-size: 0.65rem;
             }
         }
+
+        .print-hidden {
+            display: none !important;
+        }
+
+        @media print {
+            .controls, .btn-export {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
             <div class="header-content">
-                <div class="logo-text">🎮</div>
+                <img src="https://vvrl.cc/es/i543v8/logo-mir4.png" alt="MIR4 Logo" class="logo-img">
                 <div>
                     <h1 class="title">📅 Calendario MIR4</h1>
                     <p class="subtitle">⚔️ Mirage Weekly Spawns ⚔️</p>
                 </div>
             </div>
-            <div class="avatar-placeholder">👩‍🦰</div>
         </header>
 
         <section class="controls">
@@ -434,11 +439,11 @@
             </button>
 
             <button id="exportPdf" class="btn btn-export">
-                <i class="fas fa-file-pdf"></i> PDF
+                <i class="fas fa-file-pdf"></i> Descargar PDF
             </button>
 
             <button id="exportImage" class="btn btn-export">
-                <i class="fas fa-image"></i> Imagen
+                <i class="fas fa-image"></i> Descargar Imagen
             </button>
         </section>
 
@@ -478,7 +483,20 @@
     </div>
 
     <script>
-        const bossData = [
+        // Datos del Mirage Navio - Especiales
+        const mirageNavioData = [
+            { world: 'W7', level: '141+', location: '3F Desfiladero de la Lúnula de Sangre', boss: 'Mirage de Navio', times: ['22:00'] },
+            { world: 'W8', level: '≤140', location: '3F Mina Abandonada', boss: 'Mirage de Navio', times: ['00:00'] },
+            { world: 'W2', level: '143+', location: 'Pico del Camino Celeste', boss: 'Mirage de Navio', times: ['22:00'] },
+            { world: 'W5', level: '143+', location: 'Templo Ilusorio', boss: 'Mirage de Navio', times: ['00:00'] },
+            { world: 'W3', level: '150+', location: 'Túmulo de Rockut', boss: 'Mirage de Navio', times: ['22:00'] },
+            { world: 'W1', level: '≤140', location: '3F Templo del Toro Demoniaco', boss: 'Mirage de Navio', times: ['22:00'] },
+            { world: 'W4', level: '141+', location: '2F Paraíso de las Espadas', boss: 'Mirage de Navio', times: ['00:00'] },
+            { world: 'W6', level: '150+', location: 'Laberinto de Bicheon', boss: 'Mirage de Navio', times: ['00:00'] }
+        ];
+
+        // Datos de otros jefes (Weekly Spawns)
+        const otherBossData = [
             { world: 'W1', level: '140-', location: 'Bullface Forest', boss: 'Mata', times: ['2:00', '4:00', '6:00', '8:00', '10:00', '12:00'] },
             { world: 'W1', level: '140-', location: 'Demon Bull Temple 1F', boss: 'Boltox', times: ['1:00', '3:00', '5:00', '7:00', '9:00', '11:00'] },
             { world: 'W1', level: '140-', location: 'Bullface King Fiend Sanctuary', boss: 'Bullface Fiend King', times: ['3:00', '6:00', '9:00', '12:00'] },
@@ -491,7 +509,6 @@
             { world: 'W2', level: '143+', location: 'Redmoon Mountain', boss: 'Juhui', times: ['2:30', '5:30', '8:30', '11:30'] },
             { world: 'W5', level: '143+', location: 'Nine Dragon Ice Field', boss: 'Illusory Dream', times: ['7,000-8,000 Mobs'] },
             { world: 'W5', level: '143+', location: 'Great Sabuk Wall', boss: 'Faluk', times: ['3:30', '6:30', '9:30', '12:30'] },
-            { world: 'W5', level: '143+', location: 'Illusion Temple', boss: 'Tale Warper Fiend', times: ['1:30', '4:30', '7:30', '10:30'] },
             { world: 'W3', level: '150+', location: 'Nefariox Necropolis', boss: 'Tombeast Gyo', times: ['2:30', '8:30'] },
             { world: 'W3', level: '150+', location: 'Viperbeast Plain', boss: 'Dusk Armado Emperor', times: ['1:30', '3:30', '5:30', '7:30', '9:30', '11:30'] },
             { world: 'W3', level: '150+', location: 'Rockcut Tomb', boss: 'Boodo', times: ['3:30', '9:30'] },
@@ -499,60 +516,16 @@
             { world: 'W6', level: '150+', location: 'Bincheon Town', boss: 'Sura', times: ['4:30', '10:30'] },
             { world: 'W6', level: '150+', location: 'Bincheon Town', boss: 'Mokgang', times: ['2:30', '4:30', '6:30', '8:30', '10:30', '12:30'] },
             { world: 'W6', level: '150+', location: 'Phantom Woods', boss: 'Wuhan', times: ['5:30', '11:30'] },
-            { world: 'W6', level: '150+', location: 'Bincheon Labyrinth', boss: 'Obscene Yeticlops', times: ['6:30', '12:30'] },
-            { world: 'W1', level: '155+', location: 'Demoniax Mine Deep Area', boss: 'Transformed Hong Yeom', times: ['1:30', '3:30', '5:30', '7:30', '9:30', '11:30'] },
-            { world: 'W1', level: '155+', location: 'Unseo Town', boss: 'Jihwa', times: ['2:30', '5:30', '8:30', '11:30'] },
-            { world: 'W1', level: '155+', location: 'Seven Valleys Mountain', boss: 'Nighteyes Yaksha', times: ['3:30', '9:30'] },
-            { world: 'W1', level: '155+', location: 'Seven Valleys Mountain', boss: 'Black Carapace Dusk Armado', times: ['3:30', '6:30', '9:30', '12:30'] },
-            { world: 'W2', level: '155+', location: 'Roaring Flame Island', boss: 'Bulhu', times: ['4:30', '10:30'] },
-            { world: 'W2', level: '155+', location: 'Nine Dragon Ice Field', boss: 'Guemugwang', times: ['5:30', '11:30'] },
-            { world: 'W2', level: '155+', location: 'Underground Jail', boss: 'Do Maeongryong', times: ['6:30', '12:30'] },
-            { world: 'W2', level: '155+', location: 'Underground Jail', boss: 'Molgrash', times: ['1:30', '4:30', '7:30', '10:30'] },
-            { world: 'W2', level: '155+', location: 'Nine Dragon Palace', boss: 'Wi Gwangryeong', times: ['2:30', '5:30', '8:30', '11:30'] },
-            { world: 'W3', level: '158+', location: 'Primal Nefariox Ruins', boss: 'Krog', times: ['1:30', '7:30'] },
-            { world: 'W3', level: '158+', location: 'Frozen Gorge', boss: 'Kelis', times: ['2:30', '8:30'] },
-            { world: 'W3', level: '158+', location: 'Frozen Gorge', boss: 'Talasa', times: ['2:30', '5:30', '8:30', '11:30'] },
-            { world: 'W3', level: '158+', location: "Ancient One's Old Castle", boss: 'Barkas', times: ['3:30', '9:30'] },
-            { world: 'W3', level: '158+', location: "Hydra's Temple", boss: 'Bargan', times: ['3:30', '6:30', '9:30', '12:30'] },
-            { world: 'W3', level: '158+', location: "Hydra's Temple", boss: 'Morg', times: ['4:30', '10:30'] },
-            { world: 'W3', level: '158+', location: "Hydra's Depths", boss: 'Bordo', times: ['5:30', '11:30'] }
+            { world: 'W6', level: '150+', location: 'Bincheon Labyrinth', boss: 'Obscene Yeticlops', times: ['6:30', '12:30'] }
         ];
+
+        // Combinar datos - Mirage Navio primero (destacado)
+        const bossData = [...mirageNavioData, ...otherBossData];
 
         let currentTimezone = -3;
         let showDefeated = false;
         let defeatedBosses = new Set();
         let currentLanguage = 'es';
-
-        const translations = {
-            es: {
-                checkmark: '✓',
-                world: 'Mundo',
-                level: 'Nivel',
-                location: 'Ubicación',
-                boss: 'Boss',
-                times: 'Horarios',
-                actions: 'Acciones',
-                alarm: '🔔 Alarma',
-                setAlarm: '✓ Alarma',
-                configure: 'Configurar Alarma',
-                before: 'minutos antes',
-                set: 'Establecer Alarma'
-            },
-            en: {
-                checkmark: '✓',
-                world: 'World',
-                level: 'Level',
-                location: 'Location',
-                boss: 'Boss',
-                times: 'Times',
-                actions: 'Actions',
-                alarm: '🔔 Alarm',
-                setAlarm: '✓ Alarm',
-                configure: 'Configure Alarm',
-                before: 'minutes before',
-                set: 'Set Alarm'
-            }
-        };
 
         document.getElementById('timezone').addEventListener('change', (e) => {
             currentTimezone = parseInt(e.target.value);
@@ -578,14 +551,16 @@
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-            const t = translations[currentLanguage];
 
             bossData.forEach((boss, index) => {
                 const isDefeated = defeatedBosses.has(`${boss.world}-${boss.boss}`);
                 if (!showDefeated && isDefeated) return;
 
                 const row = document.createElement('tr');
+                const isMirageNavio = boss.boss === 'Mirage de Navio';
+                
                 row.className = isDefeated ? 'defeated' : '';
+                if (isMirageNavio) row.classList.add('mirage-main');
 
                 const times = boss.times.map(time => {
                     if (time.includes('Mobs')) return time;
@@ -654,12 +629,49 @@
             alert('¡Alarma configurada!');
         }
 
-        function exportToPDF() {
-            alert('Función de PDF disponible con html2pdf');
+        async function exportToPDF() {
+            const element = document.querySelector('.calendar-section');
+            const table = document.getElementById('calendarTable').cloneNode(true);
+            const container = document.createElement('div');
+            
+            const logo = document.querySelector('.logo-img');
+            const title = document.querySelector('.title');
+            const subtitle = document.querySelector('.subtitle');
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="color: #ff48a0; font-size: 24px; margin: 10px 0;">${title.textContent}</h1>
+                    <p style="color: #ff48a0; font-size: 16px;">${subtitle.textContent}</p>
+                </div>
+            `;
+            
+            container.appendChild(table);
+
+            const options = {
+                margin: 10,
+                filename: 'mirage-calendario.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+            };
+
+            html2pdf().set(options).from(container).save();
+            alert('PDF descargado correctamente');
         }
 
-        function exportToImage() {
-            alert('Función de imagen disponible con html2canvas');
+        async function exportToImage() {
+            const element = document.querySelector('.calendar-section');
+            const canvas = await html2canvas(element, {
+                backgroundColor: '#050810',
+                scale: 2,
+                useCORS: true
+            });
+
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'mirage-calendario.png';
+            link.click();
+            alert('Imagen descargada correctamente');
         }
 
         window.addEventListener('click', (e) => {
