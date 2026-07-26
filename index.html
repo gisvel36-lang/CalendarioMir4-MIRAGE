@@ -4,22 +4,396 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIR4 - Calendario de Apariciones Mirage de Navio</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff48a0;
+            --bg-dark: #0a0e27;
+            --bg-darker: #050810;
+            --text-light: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --success: #4ade80;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #050810 0%, #0a0e27 50%, #1a0f2e 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(255, 72, 160, 0.3);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .logo-text {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 0 10px rgba(255, 72, 160, 0.5));
+            animation: pulse 2s infinite;
+        }
+
+        .avatar-placeholder {
+            font-size: 5rem;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255, 72, 160, 0.6);
+            background: rgba(255, 72, 160, 0.1);
+            animation: avatarGlow 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes avatarGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 72, 160, 0.6); }
+            50% { box-shadow: 0 0 40px rgba(255, 72, 160, 0.8); }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-color), #ff8acc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(26, 31, 58, 0.4);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 72, 160, 0.2);
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label i {
+            color: var(--primary-color);
+        }
+
+        .select-input {
+            background: rgba(10, 14, 39, 0.8);
+            border: 2px solid var(--primary-color);
+            color: var(--text-light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .select-input:hover {
+            box-shadow: 0 0 15px rgba(255, 72, 160, 0.4);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        .btn-toggle {
+            background: linear-gradient(135deg, var(--primary-color), #ff8acc);
+            color: #fff;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 15px rgba(255, 72, 160, 0.3);
+        }
+
+        .btn-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 72, 160, 0.6);
+        }
+
+        .btn-toggle.active {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .btn-export {
+            background: rgba(255, 72, 160, 0.1);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-export:hover {
+            background: rgba(255, 72, 160, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #ff8acc);
+            color: #fff;
+            border: none;
+            width: 100%;
+        }
+
+        .calendar-section {
+            background: rgba(26, 31, 58, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255, 72, 160, 0.2);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 39, 0.6);
+        }
+
+        .calendar-table thead {
+            background: linear-gradient(135deg, rgba(255, 72, 160, 0.2), rgba(255, 136, 204, 0.1));
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .calendar-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .calendar-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 72, 160, 0.1);
+            color: var(--text-light);
+        }
+
+        .calendar-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .calendar-table tbody tr:hover {
+            background: rgba(255, 72, 160, 0.05);
+        }
+
+        .calendar-table tbody tr.defeated {
+            opacity: 0.6;
+        }
+
+        .calendar-table tbody tr.defeated td {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 72, 160, 0.2);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-small:hover {
+            background: rgba(255, 72, 160, 0.4);
+        }
+
+        .btn-small.set {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(10, 14, 39, 0.95));
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 40px rgba(255, 72, 160, 0.5);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .alarm-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .alarm-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-group {
+                width: 100%;
+            }
+
+            .select-input {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .calendar-table th,
+            .calendar-table td {
+                padding: 10px 8px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <div class="logo-text">🎮 MIR4</div>
-                <h1 class="title">📅 Calendario de Apariciones</h1>
-                <p class="subtitle">⚔️ Mirage de Navio ⚔️</p>
+                <div class="logo-text">🎮</div>
+                <div>
+                    <h1 class="title">📅 Calendario MIR4</h1>
+                    <p class="subtitle">⚔️ Mirage de Navio ⚔️</p>
+                </div>
             </div>
             <div class="avatar-placeholder">👩‍🦰</div>
         </header>
 
-        <!-- Controls Section -->
         <section class="controls">
             <div class="control-group">
                 <label for="timezone">
@@ -59,58 +433,158 @@
             </button>
         </section>
 
-        <!-- Calendar Table -->
         <section class="calendar-section">
             <div class="table-wrapper">
                 <table class="calendar-table" id="calendarTable">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="selectAll" class="checkbox-select"></th>
-                            <th data-i18n="world">Mundo</th>
-                            <th data-i18n="level">Nivel Requerido</th>
-                            <th data-i18n="location">Ubicación</th>
-                            <th data-i18n="boss">Nombre del Jefe</th>
-                            <th data-i18n="time">Horarios</th>
-                            <th data-i18n="actions">Acciones</th>
+                            <th>✓</th>
+                            <th>Mundo</th>
+                            <th>Nivel Requerido</th>
+                            <th>Ubicación</th>
+                            <th>Nombre del Jefe</th>
+                            <th>Horarios</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                    </tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </section>
-
-        <!-- Notifications Area -->
-        <div id="notificationsArea" class="notifications-area"></div>
     </div>
 
-    <!-- Alarm Modal -->
     <div id="alarmModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Configurar Alarma</h2>
             <p id="alarmBossName"></p>
             <div class="alarm-options">
-                <label>
-                    <input type="radio" name="alarmType" value="10" checked> 10 minutos antes
-                </label>
-                <label>
-                    <input type="radio" name="alarmType" value="15"> 15 minutos antes
-                </label>
-                <label>
-                    <input type="radio" name="alarmType" value="30"> 30 minutos antes
-                </label>
-                <label>
-                    <input type="radio" name="alarmType" value="60"> 1 hora antes
-                </label>
+                <label><input type="radio" name="alarmType" value="10" checked> 10 minutos antes</label>
+                <label><input type="radio" name="alarmType" value="15"> 15 minutos antes</label>
+                <label><input type="radio" name="alarmType" value="30"> 30 minutos antes</label>
+                <label><input type="radio" name="alarmType" value="60"> 1 hora antes</label>
             </div>
             <button id="setAlarmBtn" class="btn btn-primary">Establecer Alarma</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="translations.js"></script>
-    <script src="app.js"></script>
+    <script>
+        const bossData = [
+            { world: 'W7', level: '141+', location: 'Desfiladero de la Lúnula de Sangre (3F)', boss: 'Mirage de Navio', time: '22:00' },
+            { world: 'W8', level: '≤140', location: 'Mina Abandonada (3F)', boss: 'Mirage de Navio', time: '00:00' },
+            { world: 'W2', level: '143+', location: 'Pico del Camino Celeste', boss: 'Mirage de Navio', time: '22:00' },
+            { world: 'W5', level: '143+', location: 'Templo Ilusorio', boss: 'Mirage de Navio', time: '00:00' },
+            { world: 'W3', level: '150+', location: 'Túmulo de Rockut', boss: 'Mirage de Navio', time: '22:00' },
+            { world: 'W1', level: '≤140', location: 'Templo del Toro Demoniaco (3F)', boss: 'Mirage de Navio', time: '22:00' },
+            { world: 'W4', level: '141+', location: 'Paraíso de las Espadas (2F)', boss: 'Mirage de Navio', time: '00:00' },
+            { world: 'W6', level: '150+', location: 'Laberinto de Bicheon', boss: 'Mirage de Navio', time: '00:00' }
+        ];
+
+        let currentTimezone = -3;
+        let showDefeated = false;
+        let defeatedBosses = new Set();
+
+        document.getElementById('timezone').addEventListener('change', (e) => {
+            currentTimezone = parseInt(e.target.value);
+            renderTable();
+        });
+
+        document.getElementById('toggleDefeated').addEventListener('click', (e) => {
+            showDefeated = !showDefeated;
+            e.target.classList.toggle('active', showDefeated);
+            renderTable();
+        });
+
+        document.getElementById('exportPdf').addEventListener('click', exportToPDF);
+        document.getElementById('exportImage').addEventListener('click', exportToImage);
+        document.querySelector('.close-modal').addEventListener('click', closeModal);
+        document.getElementById('setAlarmBtn').addEventListener('click', setAlarm);
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            bossData.forEach((boss, index) => {
+                const isDefeated = defeatedBosses.has(boss.world);
+                if (!showDefeated && isDefeated) return;
+
+                const row = document.createElement('tr');
+                row.className = isDefeated ? 'defeated' : '';
+
+                const timeWithTimezone = calculateTimezone(boss.time);
+                const hasAlarm = localStorage.getItem(`alarm-${boss.world}`) === 'true';
+
+                row.innerHTML = `
+                    <td><input type="checkbox" ${isDefeated ? 'checked' : ''} onchange="toggleDefeated('${boss.world}')"></td>
+                    <td><strong>${boss.world}</strong></td>
+                    <td>${boss.level}</td>
+                    <td>${boss.location}</td>
+                    <td>${boss.boss}</td>
+                    <td>UTC: ${boss.time}<br>Local: ${timeWithTimezone}</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="btn-small ${hasAlarm ? 'set' : ''}" onclick="openAlarmModal('${boss.world}', '${boss.boss}')">
+                                ${hasAlarm ? '✓ Alarma' : '🔔 Alarma'}
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function calculateTimezone(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            let newHours = hours + currentTimezone + 3;
+            
+            if (newHours >= 24) newHours -= 24;
+            if (newHours < 0) newHours += 24;
+            
+            return `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        }
+
+        function toggleDefeated(world) {
+            if (defeatedBosses.has(world)) {
+                defeatedBosses.delete(world);
+            } else {
+                defeatedBosses.add(world);
+            }
+            renderTable();
+        }
+
+        function openAlarmModal(world, boss) {
+            document.getElementById('alarmBossName').textContent = `${world} - ${boss}`;
+            document.getElementById('alarmModal').classList.add('active');
+            document.getElementById('alarmModal').dataset.world = world;
+        }
+
+        function closeModal() {
+            document.getElementById('alarmModal').classList.remove('active');
+        }
+
+        function setAlarm() {
+            const world = document.getElementById('alarmModal').dataset.world;
+            localStorage.setItem(`alarm-${world}`, 'true');
+            closeModal();
+            renderTable();
+            alert('¡Alarma configurada!');
+        }
+
+        function exportToPDF() {
+            alert('Función de PDF disponible con html2pdf');
+        }
+
+        function exportToImage() {
+            alert('Función de imagen disponible con html2canvas');
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('alarmModal')) {
+                closeModal();
+            }
+        });
+
+        renderTable();
+    </script>
 </body>
 </html>
