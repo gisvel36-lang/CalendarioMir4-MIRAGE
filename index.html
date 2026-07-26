@@ -12,11 +12,11 @@
         <!-- Header -->
         <header class="header">
             <div class="header-content">
-                <img src="https://vvrl.cc/es/i543v8/logo-mir4.png" alt="MIR4 Logo" class="logo" onerror="this.style.display='none'">
+                <div class="logo-text">🎮 MIR4</div>
                 <h1 class="title">📅 Calendario de Apariciones</h1>
                 <p class="subtitle">⚔️ Mirage de Navio ⚔️</p>
             </div>
-            <img src="https://vvrl.cc/es/k9x69m" alt="Avatar Gisvel36" class="avatar" onerror="this.style.display='none'">
+            <div class="avatar-placeholder">👩‍🦰</div>
         </header>
 
         <!-- Controls Section -->
@@ -112,29 +112,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="translations.js"></script>
     <script src="app.js"></script>
-    
-    <script>
-        // Debug: Verificar si las imágenes se cargan
-        console.log('URLs de las imágenes:');
-        console.log('Logo: https://vvrl.cc/es/i543v8/logo-mir4.png');
-        console.log('Avatar: https://vvrl.cc/es/k9x69m');
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const logo = document.querySelector('.logo');
-            const avatar = document.querySelector('.avatar');
-            
-            if (logo) {
-                console.log('Logo encontrado:', logo.src);
-                logo.addEventListener('error', () => console.error('Error al cargar logo'));
-                logo.addEventListener('load', () => console.log('Logo cargado exitosamente'));
-            }
-            
-            if (avatar) {
-                console.log('Avatar encontrado:', avatar.src);
-                avatar.addEventListener('error', () => console.error('Error al cargar avatar'));
-                avatar.addEventListener('load', () => console.log('Avatar cargado exitosamente'));
-            }
-        });
-    </script>
 </body>
 </html>
