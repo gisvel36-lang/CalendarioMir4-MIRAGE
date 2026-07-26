@@ -219,25 +219,28 @@
             width: 100%;
             border-collapse: collapse;
             background: rgba(10, 14, 39, 0.6);
+            font-size: 0.9rem;
         }
 
         .calendar-table thead {
             background: linear-gradient(135deg, rgba(255, 72, 160, 0.2), rgba(255, 136, 204, 0.1));
             border-bottom: 2px solid var(--primary-color);
+            position: sticky;
+            top: 0;
         }
 
         .calendar-table th {
-            padding: 15px;
+            padding: 12px 8px;
             text-align: left;
             font-weight: 700;
             color: var(--primary-color);
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .calendar-table td {
-            padding: 15px;
+            padding: 10px 8px;
             border-bottom: 1px solid rgba(255, 72, 160, 0.1);
             color: var(--text-light);
         }
@@ -261,14 +264,14 @@
 
         .row-actions {
             display: flex;
-            gap: 8px;
+            gap: 5px;
         }
 
         .btn-small {
-            padding: 8px 12px;
-            font-size: 0.85rem;
+            padding: 6px 10px;
+            font-size: 0.75rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s ease;
             background: rgba(255, 72, 160, 0.2);
@@ -373,10 +376,18 @@
                 justify-content: center;
             }
 
+            .calendar-table {
+                font-size: 0.75rem;
+            }
+
             .calendar-table th,
             .calendar-table td {
-                padding: 10px 8px;
-                font-size: 0.85rem;
+                padding: 6px 4px;
+            }
+
+            .btn-small {
+                padding: 4px 6px;
+                font-size: 0.65rem;
             }
         }
     </style>
@@ -388,7 +399,7 @@
                 <div class="logo-text">🎮</div>
                 <div>
                     <h1 class="title">📅 Calendario MIR4</h1>
-                    <p class="subtitle">⚔️ Mirage de Navio ⚔️</p>
+                    <p class="subtitle">⚔️ Mirage Weekly Spawns ⚔️</p>
                 </div>
             </div>
             <div class="avatar-placeholder">👩‍🦰</div>
@@ -415,8 +426,6 @@
                 <select id="language" class="select-input">
                     <option value="es">Español</option>
                     <option value="en">English</option>
-                    <option value="pt">Português</option>
-                    <option value="ko">한국어</option>
                 </select>
             </div>
 
@@ -440,9 +449,9 @@
                         <tr>
                             <th>✓</th>
                             <th>Mundo</th>
-                            <th>Nivel Requerido</th>
+                            <th>Nivel</th>
                             <th>Ubicación</th>
-                            <th>Nombre del Jefe</th>
+                            <th>Boss</th>
                             <th>Horarios</th>
                             <th>Acciones</th>
                         </tr>
@@ -470,22 +479,88 @@
 
     <script>
         const bossData = [
-            { world: 'W7', level: '141+', location: 'Desfiladero de la Lúnula de Sangre (3F)', boss: 'Mirage de Navio', time: '22:00' },
-            { world: 'W8', level: '≤140', location: 'Mina Abandonada (3F)', boss: 'Mirage de Navio', time: '00:00' },
-            { world: 'W2', level: '143+', location: 'Pico del Camino Celeste', boss: 'Mirage de Navio', time: '22:00' },
-            { world: 'W5', level: '143+', location: 'Templo Ilusorio', boss: 'Mirage de Navio', time: '00:00' },
-            { world: 'W3', level: '150+', location: 'Túmulo de Rockut', boss: 'Mirage de Navio', time: '22:00' },
-            { world: 'W1', level: '≤140', location: 'Templo del Toro Demoniaco (3F)', boss: 'Mirage de Navio', time: '22:00' },
-            { world: 'W4', level: '141+', location: 'Paraíso de las Espadas (2F)', boss: 'Mirage de Navio', time: '00:00' },
-            { world: 'W6', level: '150+', location: 'Laberinto de Bicheon', boss: 'Mirage de Navio', time: '00:00' }
+            { world: 'W1', level: '140-', location: 'Bullface Forest', boss: 'Mata', times: ['2:00', '4:00', '6:00', '8:00', '10:00', '12:00'] },
+            { world: 'W1', level: '140-', location: 'Demon Bull Temple 1F', boss: 'Boltox', times: ['1:00', '3:00', '5:00', '7:00', '9:00', '11:00'] },
+            { world: 'W1', level: '140-', location: 'Bullface King Fiend Sanctuary', boss: 'Bullface Fiend King', times: ['3:00', '6:00', '9:00', '12:00'] },
+            { world: 'W8', level: '140-', location: 'Whitemaur Sealing Circle', boss: 'Yeo Wihuang', times: ['1:00', '5:00', '9:00'] },
+            { world: 'W7', level: '141+', location: 'Taehyuls Garden', boss: 'Taehyul', times: ['1:00', '3:00', '5:00', '7:00', '9:00', '11:00'] },
+            { world: 'W7', level: '141+', location: 'Demon Cult Hall', boss: 'Yiun', times: ['2:00', '5:00', '8:00', '11:00'] },
+            { world: 'W4', level: '141+', location: 'Phantasia Desert', boss: 'Nefarox Obdurate Zenith', times: ['2:00', '4:00', '6:00', '8:00', '10:00', '12:00'] },
+            { world: 'W4', level: '141+', location: 'Overlord Sealing Circle', boss: 'Kurilaica', times: ['3:00', '6:00', '9:00', '12:00'] },
+            { world: 'W2', level: '143+', location: 'Seochon Trading Post', boss: 'Ma Wonwi', times: ['7,000-8,000 Mobs'] },
+            { world: 'W2', level: '143+', location: 'Redmoon Mountain', boss: 'Juhui', times: ['2:30', '5:30', '8:30', '11:30'] },
+            { world: 'W5', level: '143+', location: 'Nine Dragon Ice Field', boss: 'Illusory Dream', times: ['7,000-8,000 Mobs'] },
+            { world: 'W5', level: '143+', location: 'Great Sabuk Wall', boss: 'Faluk', times: ['3:30', '6:30', '9:30', '12:30'] },
+            { world: 'W5', level: '143+', location: 'Illusion Temple', boss: 'Tale Warper Fiend', times: ['1:30', '4:30', '7:30', '10:30'] },
+            { world: 'W3', level: '150+', location: 'Nefariox Necropolis', boss: 'Tombeast Gyo', times: ['2:30', '8:30'] },
+            { world: 'W3', level: '150+', location: 'Viperbeast Plain', boss: 'Dusk Armado Emperor', times: ['1:30', '3:30', '5:30', '7:30', '9:30', '11:30'] },
+            { world: 'W3', level: '150+', location: 'Rockcut Tomb', boss: 'Boodo', times: ['3:30', '9:30'] },
+            { world: 'W3', level: '150+', location: 'Rockcut Tomb', boss: 'Mara', times: ['2:30', '5:30', '8:30', '11:30'] },
+            { world: 'W6', level: '150+', location: 'Bincheon Town', boss: 'Sura', times: ['4:30', '10:30'] },
+            { world: 'W6', level: '150+', location: 'Bincheon Town', boss: 'Mokgang', times: ['2:30', '4:30', '6:30', '8:30', '10:30', '12:30'] },
+            { world: 'W6', level: '150+', location: 'Phantom Woods', boss: 'Wuhan', times: ['5:30', '11:30'] },
+            { world: 'W6', level: '150+', location: 'Bincheon Labyrinth', boss: 'Obscene Yeticlops', times: ['6:30', '12:30'] },
+            { world: 'W1', level: '155+', location: 'Demoniax Mine Deep Area', boss: 'Transformed Hong Yeom', times: ['1:30', '3:30', '5:30', '7:30', '9:30', '11:30'] },
+            { world: 'W1', level: '155+', location: 'Unseo Town', boss: 'Jihwa', times: ['2:30', '5:30', '8:30', '11:30'] },
+            { world: 'W1', level: '155+', location: 'Seven Valleys Mountain', boss: 'Nighteyes Yaksha', times: ['3:30', '9:30'] },
+            { world: 'W1', level: '155+', location: 'Seven Valleys Mountain', boss: 'Black Carapace Dusk Armado', times: ['3:30', '6:30', '9:30', '12:30'] },
+            { world: 'W2', level: '155+', location: 'Roaring Flame Island', boss: 'Bulhu', times: ['4:30', '10:30'] },
+            { world: 'W2', level: '155+', location: 'Nine Dragon Ice Field', boss: 'Guemugwang', times: ['5:30', '11:30'] },
+            { world: 'W2', level: '155+', location: 'Underground Jail', boss: 'Do Maeongryong', times: ['6:30', '12:30'] },
+            { world: 'W2', level: '155+', location: 'Underground Jail', boss: 'Molgrash', times: ['1:30', '4:30', '7:30', '10:30'] },
+            { world: 'W2', level: '155+', location: 'Nine Dragon Palace', boss: 'Wi Gwangryeong', times: ['2:30', '5:30', '8:30', '11:30'] },
+            { world: 'W3', level: '158+', location: 'Primal Nefariox Ruins', boss: 'Krog', times: ['1:30', '7:30'] },
+            { world: 'W3', level: '158+', location: 'Frozen Gorge', boss: 'Kelis', times: ['2:30', '8:30'] },
+            { world: 'W3', level: '158+', location: 'Frozen Gorge', boss: 'Talasa', times: ['2:30', '5:30', '8:30', '11:30'] },
+            { world: 'W3', level: '158+', location: "Ancient One's Old Castle", boss: 'Barkas', times: ['3:30', '9:30'] },
+            { world: 'W3', level: '158+', location: "Hydra's Temple", boss: 'Bargan', times: ['3:30', '6:30', '9:30', '12:30'] },
+            { world: 'W3', level: '158+', location: "Hydra's Temple", boss: 'Morg', times: ['4:30', '10:30'] },
+            { world: 'W3', level: '158+', location: "Hydra's Depths", boss: 'Bordo', times: ['5:30', '11:30'] }
         ];
 
         let currentTimezone = -3;
         let showDefeated = false;
         let defeatedBosses = new Set();
+        let currentLanguage = 'es';
+
+        const translations = {
+            es: {
+                checkmark: '✓',
+                world: 'Mundo',
+                level: 'Nivel',
+                location: 'Ubicación',
+                boss: 'Boss',
+                times: 'Horarios',
+                actions: 'Acciones',
+                alarm: '🔔 Alarma',
+                setAlarm: '✓ Alarma',
+                configure: 'Configurar Alarma',
+                before: 'minutos antes',
+                set: 'Establecer Alarma'
+            },
+            en: {
+                checkmark: '✓',
+                world: 'World',
+                level: 'Level',
+                location: 'Location',
+                boss: 'Boss',
+                times: 'Times',
+                actions: 'Actions',
+                alarm: '🔔 Alarm',
+                setAlarm: '✓ Alarm',
+                configure: 'Configure Alarm',
+                before: 'minutes before',
+                set: 'Set Alarm'
+            }
+        };
 
         document.getElementById('timezone').addEventListener('change', (e) => {
             currentTimezone = parseInt(e.target.value);
+            renderTable();
+        });
+
+        document.getElementById('language').addEventListener('change', (e) => {
+            currentLanguage = e.target.value;
             renderTable();
         });
 
@@ -503,27 +578,33 @@
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
+            const t = translations[currentLanguage];
 
             bossData.forEach((boss, index) => {
-                const isDefeated = defeatedBosses.has(boss.world);
+                const isDefeated = defeatedBosses.has(`${boss.world}-${boss.boss}`);
                 if (!showDefeated && isDefeated) return;
 
                 const row = document.createElement('tr');
                 row.className = isDefeated ? 'defeated' : '';
 
-                const timeWithTimezone = calculateTimezone(boss.time);
-                const hasAlarm = localStorage.getItem(`alarm-${boss.world}`) === 'true';
+                const times = boss.times.map(time => {
+                    if (time.includes('Mobs')) return time;
+                    return calculateTimezone(time);
+                }).join(' / ');
+
+                const hasAlarm = localStorage.getItem(`alarm-${boss.world}-${boss.boss}`) === 'true';
+                const bossKey = `${boss.world}-${boss.boss}`;
 
                 row.innerHTML = `
-                    <td><input type="checkbox" ${isDefeated ? 'checked' : ''} onchange="toggleDefeated('${boss.world}')"></td>
+                    <td><input type="checkbox" ${isDefeated ? 'checked' : ''} onchange="toggleDefeated('${bossKey}')"></td>
                     <td><strong>${boss.world}</strong></td>
                     <td>${boss.level}</td>
                     <td>${boss.location}</td>
                     <td>${boss.boss}</td>
-                    <td>UTC: ${boss.time}<br>Local: ${timeWithTimezone}</td>
+                    <td>${times}</td>
                     <td>
                         <div class="row-actions">
-                            <button class="btn-small ${hasAlarm ? 'set' : ''}" onclick="openAlarmModal('${boss.world}', '${boss.boss}')">
+                            <button class="btn-small ${hasAlarm ? 'set' : ''}" onclick="openAlarmModal('${bossKey}', '${boss.boss}')">
                                 ${hasAlarm ? '✓ Alarma' : '🔔 Alarma'}
                             </button>
                         </div>
@@ -534,28 +615,31 @@
         }
 
         function calculateTimezone(time) {
-            const [hours, minutes] = time.split(':').map(Number);
-            let newHours = hours + currentTimezone + 3;
-            
-            if (newHours >= 24) newHours -= 24;
-            if (newHours < 0) newHours += 24;
-            
-            return `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            if (time.includes(':')) {
+                const [hours, minutes] = time.split(':').map(Number);
+                let newHours = hours + currentTimezone + 3;
+                
+                if (newHours >= 24) newHours -= 24;
+                if (newHours < 0) newHours += 24;
+                
+                return `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            }
+            return time;
         }
 
-        function toggleDefeated(world) {
-            if (defeatedBosses.has(world)) {
-                defeatedBosses.delete(world);
+        function toggleDefeated(bossKey) {
+            if (defeatedBosses.has(bossKey)) {
+                defeatedBosses.delete(bossKey);
             } else {
-                defeatedBosses.add(world);
+                defeatedBosses.add(bossKey);
             }
             renderTable();
         }
 
-        function openAlarmModal(world, boss) {
-            document.getElementById('alarmBossName').textContent = `${world} - ${boss}`;
+        function openAlarmModal(bossKey, boss) {
+            document.getElementById('alarmBossName').textContent = `${bossKey} - ${boss}`;
             document.getElementById('alarmModal').classList.add('active');
-            document.getElementById('alarmModal').dataset.world = world;
+            document.getElementById('alarmModal').dataset.bossKey = bossKey;
         }
 
         function closeModal() {
@@ -563,8 +647,8 @@
         }
 
         function setAlarm() {
-            const world = document.getElementById('alarmModal').dataset.world;
-            localStorage.setItem(`alarm-${world}`, 'true');
+            const bossKey = document.getElementById('alarmModal').dataset.bossKey;
+            localStorage.setItem(`alarm-${bossKey}`, 'true');
             closeModal();
             renderTable();
             alert('¡Alarma configurada!');
